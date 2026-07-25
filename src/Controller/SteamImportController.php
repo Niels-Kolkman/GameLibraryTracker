@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Table\LibraryGamesTable;
+use App\Model\Table\UsersTable;
 use App\Service\GameTitleMatcher;
 use App\Service\RawgApiService;
 use App\Service\SteamApiService;
@@ -26,11 +27,14 @@ class SteamImportController extends AppController
 
     protected LibraryGamesTable $LibraryGames;
 
+    protected UsersTable $Users;
+
     public function initialize(): void
     {
         parent::initialize();
 
         $this->LibraryGames = $this->fetchTable('LibraryGames');
+        $this->Users = $this->fetchTable('Users');
     }
 
     /**
@@ -67,6 +71,10 @@ class SteamImportController extends AppController
 
             return null;
         }
+
+        $user = $this->Users->get($this->currentUserId());
+        $user->steam_id64 = $steamId;
+        $this->Users->save($user);
 
         if (!$ownedGames) {
             $this->Flash->error(__('That Steam library is empty or not public.'));
@@ -174,6 +182,7 @@ class SteamImportController extends AppController
                 'cover_url' => $game['rawg']['cover_url'],
                 'genres' => $game['rawg']['genres'],
                 'rating' => $game['rawg']['rating'],
+                'steam_appid' => $game['appid'],
                 'status' => 'backlog',
             ]);
 

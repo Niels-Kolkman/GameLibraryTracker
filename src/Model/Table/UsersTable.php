@@ -73,6 +73,11 @@ class UsersTable extends Table
             ->requirePresence('password', 'create')
             ->notEmptyString('password');
 
+        $validator
+            ->scalar('steam_id64')
+            ->maxLength('steam_id64', 20)
+            ->allowEmptyString('steam_id64');
+
         return $validator;
     }
 

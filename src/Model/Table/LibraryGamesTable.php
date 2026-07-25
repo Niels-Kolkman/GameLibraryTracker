@@ -91,6 +91,10 @@ class LibraryGamesTable extends Table
             ->allowEmptyString('rating');
 
         $validator
+            ->integer('steam_appid')
+            ->allowEmptyString('steam_appid');
+
+        $validator
             ->scalar('status')
             ->maxLength('status', 20)
             ->notEmptyString('status')

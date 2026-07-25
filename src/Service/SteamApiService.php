@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Cake\Cache\Cache;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 
@@ -135,6 +136,103 @@ class SteamApiService
                 $game['appid'],
             ),
         ];
+    }
+
+    /**
+     * Fetch a player's achievement progress for a game, merged with the
+     * game's achievement schema (display name, description, icon).
+     *
+     * Returns null when the game has no achievements, or the player's
+     * stats for it aren't public/available — both common, expected cases.
+     *
+     * @param string $steamId64 Resolved SteamID64.
+     * @param int $appid Steam app id.
+     * @return array<int, array<string, mixed>>|null
+     */
+    public function getAchievements(string $steamId64, int $appid): ?array
+    {
+        $progress = $this->getPlayerAchievements($steamId64, $appid);
+        if ($progress === null) {
+            return null;
+        }
+
+        $schema = $this->getGameSchema($appid);
+
+        return array_map(function (array $achievement) use ($schema): array {
+            $info = $schema[$achievement['apiname']] ?? null;
+
+            return [
+                'name' => $achievement['apiname'],
+                'displayName' => $info['displayName'] ?? $achievement['apiname'],
+                'description' => $info['description'] ?? '',
+                'icon' => $achievement['achieved'] ? ($info['icon'] ?? null) : ($info['icongray'] ?? null),
+                'achieved' => (bool)$achievement['achieved'],
+                'unlocktime' => $achievement['unlocktime'] ?? null,
+            ];
+        }, $progress);
+    }
+
+    /**
+     * @param string $steamId64 Resolved SteamID64.
+     * @param int $appid Steam app id.
+     * @return array<int, array<string, mixed>>|null Raw achievement progress, or null if unavailable.
+     */
+    protected function getPlayerAchievements(string $steamId64, int $appid): ?array
+    {
+        $this->assertApiKey();
+
+        $cacheKey = 'player_achievements_' . $steamId64 . '_' . $appid;
+
+        return Cache::remember($cacheKey, function () use ($steamId64, $appid) {
+            $response = $this->client->get(self::BASE_URL . '/ISteamUserStats/GetPlayerAchievements/v0001/', [
+                'key' => $this->apiKey,
+                'steamid' => $steamId64,
+                'appid' => $appid,
+                'format' => 'json',
+            ]);
+
+            if (!$response->isOk()) {
+                return null;
+            }
+
+            $stats = $response->getJson()['playerstats'] ?? [];
+            if (($stats['success'] ?? false) !== true) {
+                return null;
+            }
+
+            return $stats['achievements'] ?? null;
+        }, 'steam');
+    }
+
+    /**
+     * @param int $appid Steam app id.
+     * @return array<string, array<string, mixed>> Achievement schema keyed by apiname.
+     */
+    protected function getGameSchema(int $appid): array
+    {
+        $this->assertApiKey();
+
+        $cacheKey = 'game_schema_' . $appid;
+
+        return Cache::remember($cacheKey, function () use ($appid) {
+            $response = $this->client->get(self::BASE_URL . '/ISteamUserStats/GetSchemaForGame/v2/', [
+                'key' => $this->apiKey,
+                'appid' => $appid,
+                'format' => 'json',
+            ]);
+
+            if (!$response->isOk()) {
+                return [];
+            }
+
+            $achievements = $response->getJson()['game']['availableGameStats']['achievements'] ?? [];
+            $keyed = [];
+            foreach ($achievements as $achievement) {
+                $keyed[$achievement['name']] = $achievement;
+            }
+
+            return $keyed;
+        }, 'steam');
     }
 
     protected function assertApiKey(): void

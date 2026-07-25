@@ -50,7 +50,9 @@ $sortLink = function (string $field, string $label) use ($sort, $direction, $sta
             <tbody>
                 <?php foreach ($libraryGames as $libraryGame): ?>
                     <tr>
-                        <td data-label="<?= __('Title') ?>"><?= h($libraryGame->title) ?></td>
+                        <td data-label="<?= __('Title') ?>">
+                            <?= $this->Html->link($libraryGame->title, ['action' => 'view', $libraryGame->id]) ?>
+                        </td>
                         <td data-label="<?= __('Genres') ?>"><?= h($libraryGame->genres) ?></td>
                         <td data-label="<?= __('Rating') ?>"><?= h((string)$libraryGame->rating) ?></td>
                         <td data-label="<?= __('Status') ?>">

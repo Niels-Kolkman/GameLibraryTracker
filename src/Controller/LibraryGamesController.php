@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Table\UsersTable;
+use App\Service\SteamApiService;
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\NotFoundException;
 
 /**
@@ -15,6 +18,15 @@ class LibraryGamesController extends AppController
     public const STATUSES = ['playing', 'completed', 'backlog', 'wishlist'];
 
     protected const SORT_FIELDS = ['title', 'rating', 'status'];
+
+    protected UsersTable $Users;
+
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->Users = $this->fetchTable('Users');
+    }
 
     public function index(): void
     {
@@ -38,6 +50,36 @@ class LibraryGamesController extends AppController
         $libraryGames = $query->all();
         $statuses = self::STATUSES;
         $this->set(compact('libraryGames', 'statuses', 'status', 'genre', 'sort', 'direction'));
+    }
+
+    public function view(string $id): void
+    {
+        $libraryGame = $this->ownedLibraryGame($id);
+        $user = $this->Users->get($this->currentUserId());
+
+        $achievements = null;
+        $achievementsError = null;
+
+        if ($libraryGame->steam_appid === null) {
+            $achievementsError = __('This game wasn\'t linked to Steam, so no achievement data is available.');
+        } elseif ($user->steam_id64 === null) {
+            $achievementsError = __('Connect your Steam account first by running an import from the "Import from Steam" page.');
+        } else {
+            try {
+                $achievements = (new SteamApiService())->getAchievements($user->steam_id64, $libraryGame->steam_appid);
+                if ($achievements === null) {
+                    $achievementsError = __('No achievement data is available for this game (it may not have any, or your Steam stats are private).');
+                }
+            } catch (CakeException $exception) {
+                $achievementsError = $exception->getMessage();
+            }
+        }
+
+        $unlockedCount = $achievements !== null
+            ? count(array_filter($achievements, fn (array $a): bool => $a['achieved']))
+            : 0;
+
+        $this->set(compact('libraryGame', 'achievements', 'achievementsError', 'unlockedCount'));
     }
 
     public function add()

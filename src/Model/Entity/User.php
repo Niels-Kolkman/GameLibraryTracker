@@ -12,6 +12,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string $email
  * @property string $password
+ * @property string|null $steam_id64
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
@@ -31,6 +32,7 @@ class User extends Entity
     protected array $_accessible = [
         'email' => true,
         'password' => true,
+        'steam_id64' => true,
         'created' => true,
         'modified' => true,
         'library_games' => true,

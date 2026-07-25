@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property string|null $cover_url
  * @property string|null $genres
  * @property string|null $rating
+ * @property int|null $steam_appid
  * @property string $status
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
@@ -39,6 +40,7 @@ class LibraryGame extends Entity
         'cover_url' => true,
         'genres' => true,
         'rating' => true,
+        'steam_appid' => true,
         'status' => true,
         'created' => true,
         'modified' => true,

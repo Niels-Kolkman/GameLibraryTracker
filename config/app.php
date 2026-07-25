@@ -146,6 +146,18 @@ return [
             'serialize' => true,
             'duration' => '+1 day',
         ],
+
+        /*
+         * Caches Steam Web API responses (owned games matching + per-game
+         * achievement schema/progress).
+         */
+        'steam' => [
+            'className' => FileEngine::class,
+            'prefix' => 'steam_',
+            'path' => CACHE . 'steam' . DS,
+            'serialize' => true,
+            'duration' => '+1 hour',
+        ],
     ],
 
     /*

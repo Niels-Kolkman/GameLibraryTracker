@@ -316,6 +316,53 @@ input[type="submit"]:hover {
     max-width: none;
 }
 
+/* Game detail / achievements */
+
+.game-detail-header {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.game-detail-header img {
+    width: 220px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.achievement-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.75rem;
+}
+
+.achievement {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+}
+
+.achievement img {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.achievement.locked {
+    opacity: 0.5;
+}
+
+.achievement strong {
+    display: block;
+    font-size: 0.9rem;
+}
+
 /* Library table */
 
 table {
