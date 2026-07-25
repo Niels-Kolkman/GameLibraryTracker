@@ -11,7 +11,7 @@ $matchedCount = count(array_filter($results, fn ($r) => $r['rawg'] !== null && !
         <?= __('Found {0} game(s). {1} matched and ready to import — review the selection below.', count($results), $matchedCount) ?>
     </p>
 
-    <?= $this->Form->create(null, ['url' => ['action' => 'import']]) ?>
+    <?= $this->Form->create(null, ['url' => ['action' => 'import'], 'class' => 'wide-form']) ?>
     <div class="results-grid">
         <?php foreach ($results as $game): ?>
             <div class="game-result">

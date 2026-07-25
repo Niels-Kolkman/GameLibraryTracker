@@ -17,6 +17,13 @@ use Cake\Core\Exception\CakeException;
  */
 class SteamImportController extends AppController
 {
+    /**
+     * Matching each owned game means one live RAWG search, so a request
+     * with hundreds of games can exceed PHP's execution time limit. Cap
+     * how many get matched per import, prioritizing the most-played games.
+     */
+    protected const MATCH_LIMIT = 60;
+
     protected LibraryGamesTable $LibraryGames;
 
     public function initialize(): void
@@ -67,7 +74,20 @@ class SteamImportController extends AppController
             return null;
         }
 
-        set_time_limit(120);
+        set_time_limit(180);
+
+        usort($ownedGames, fn (array $a, array $b): int => $b['playtime_minutes'] <=> $a['playtime_minutes']);
+
+        $totalOwned = count($ownedGames);
+        $ownedGames = array_slice($ownedGames, 0, self::MATCH_LIMIT);
+
+        if ($totalOwned > self::MATCH_LIMIT) {
+            $this->Flash->info(__(
+                'Your library has {0} games — matched your {1} most-played ones for now.',
+                $totalOwned,
+                self::MATCH_LIMIT,
+            ));
+        }
 
         $existingRawgIds = $this->LibraryGames->find()
             ->select(['rawg_id'])

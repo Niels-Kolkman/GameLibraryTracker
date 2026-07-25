@@ -171,6 +171,10 @@ form.filter-form,
     gap: 0.9rem;
 }
 
+form.wide-form {
+    max-width: none;
+}
+
 fieldset {
     border: none;
     padding: 0;
@@ -262,10 +266,9 @@ input[type="submit"]:hover {
 
 /* Game search results */
 
-.games.search .results-grid,
-.game-cards {
+.results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.25rem;
     margin-top: 1.5rem;
     padding: 0;
