@@ -43,6 +43,7 @@ $identity = $this->request->getAttribute('identity');
             <?php if ($identity): ?>
                 <?= $this->Html->link(__('My library'), ['controller' => 'LibraryGames', 'action' => 'index']) ?>
                 <?= $this->Html->link(__('Search'), ['controller' => 'Games', 'action' => 'search']) ?>
+                <?= $this->Html->link(__('Import from Steam'), ['controller' => 'SteamImport', 'action' => 'index']) ?>
                 <?= $this->Html->link(__('Log out'), ['controller' => 'Users', 'action' => 'logout']) ?>
             <?php else: ?>
                 <?= $this->Html->link(__('Log in'), ['controller' => 'Users', 'action' => 'login']) ?>

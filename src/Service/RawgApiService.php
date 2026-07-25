@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Cake\Cache\Cache;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 
@@ -38,20 +39,24 @@ class RawgApiService
             throw new CakeException('RAWG_API_KEY is not configured. Set it in config/.env.');
         }
 
-        $response = $this->client->get(self::BASE_URL . '/games', [
-            'key' => $this->apiKey,
-            'search' => $query,
-            'page_size' => $limit,
-        ]);
+        $cacheKey = 'search_' . md5(strtolower($query) . '_' . $limit);
 
-        if (!$response->isOk()) {
-            throw new CakeException('RAWG API request failed with status ' . $response->getStatusCode());
-        }
+        return Cache::remember($cacheKey, function () use ($query, $limit) {
+            $response = $this->client->get(self::BASE_URL . '/games', [
+                'key' => $this->apiKey,
+                'search' => $query,
+                'page_size' => $limit,
+            ]);
 
-        $data = $response->getJson();
-        $results = $data['results'] ?? [];
+            if (!$response->isOk()) {
+                throw new CakeException('RAWG API request failed with status ' . $response->getStatusCode());
+            }
 
-        return array_map([$this, 'normalize'], $results);
+            $data = $response->getJson();
+            $results = $data['results'] ?? [];
+
+            return array_map([$this, 'normalize'], $results);
+        }, 'rawg');
     }
 
     /**

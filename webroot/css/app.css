@@ -113,6 +113,25 @@ h3 {
     gap: 1.5rem;
 }
 
+.content > p.meta {
+    color: var(--text-muted);
+    margin: -0.75rem 0 0;
+    max-width: 640px;
+}
+
+.game-result label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    margin-top: auto;
+}
+
+.game-result input[type="checkbox"] {
+    width: auto;
+}
+
 /* Flash messages */
 
 .message {

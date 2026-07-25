@@ -133,6 +133,19 @@ return [
             'duration' => '+1 years',
             'url' => env('CACHE_CAKEMODEL_URL', null),
         ],
+
+        /*
+         * Caches RAWG.io API responses so repeated searches (and Steam
+         * library matching, which can trigger dozens of lookups) don't
+         * hit the rate limit.
+         */
+        'rawg' => [
+            'className' => FileEngine::class,
+            'prefix' => 'rawg_',
+            'path' => CACHE . 'rawg' . DS,
+            'serialize' => true,
+            'duration' => '+1 day',
+        ],
     ],
 
     /*
