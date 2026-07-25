@@ -14,7 +14,8 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
+$cakeDescription = 'Game Library Tracker';
+$identity = $this->request->getAttribute('identity');
 ?>
 <!DOCTYPE html>
 <html>
@@ -36,11 +37,16 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <body>
     <nav class="top-nav">
         <div class="top-nav-title">
-            <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
+            <a href="<?= $this->Url->build('/') ?>">Game Library Tracker</a>
         </div>
         <div class="top-nav-links">
-            <a target="_blank" rel="noopener" href="https://book.cakephp.org/5/">Documentation</a>
-            <a target="_blank" rel="noopener" href="https://api.cakephp.org/">API</a>
+            <?php if ($identity): ?>
+                <?= $this->Html->link(__('My library'), ['controller' => 'LibraryGames', 'action' => 'index']) ?>
+                <?= $this->Html->link(__('Search'), ['controller' => 'Games', 'action' => 'search']) ?>
+                <?= $this->Html->link(__('Log out'), ['controller' => 'Users', 'action' => 'logout']) ?>
+            <?php else: ?>
+                <?= $this->Html->link(__('Log in'), ['controller' => 'Users', 'action' => 'login']) ?>
+            <?php endif; ?>
         </div>
     </nav>
     <main class="main">
