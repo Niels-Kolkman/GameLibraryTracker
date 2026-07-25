@@ -28,7 +28,7 @@ $identity = $this->request->getAttribute('identity');
     </title>
     <?= $this->Html->meta('icon') ?>
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake']) ?>
+    <?= $this->Html->css(['normalize.min', 'app']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

@@ -22,7 +22,7 @@ $sortLink = function (string $field, string $label) use ($sort, $direction, $sta
     <h2><?= __('My library') ?></h2>
     <p><?= $this->Html->link(__('Search for games to add'), ['controller' => 'Games', 'action' => 'search']) ?></p>
 
-    <?= $this->Form->create(null, ['type' => 'get']) ?>
+    <?= $this->Form->create(null, ['type' => 'get', 'class' => 'filter-form']) ?>
     <?= $this->Form->control('status', [
         'options' => ['' => __('All statuses')] + array_combine($statuses, $statuses),
         'value' => $status,
@@ -50,10 +50,10 @@ $sortLink = function (string $field, string $label) use ($sort, $direction, $sta
             <tbody>
                 <?php foreach ($libraryGames as $libraryGame): ?>
                     <tr>
-                        <td><?= h($libraryGame->title) ?></td>
-                        <td><?= h($libraryGame->genres) ?></td>
-                        <td><?= h((string)$libraryGame->rating) ?></td>
-                        <td>
+                        <td data-label="<?= __('Title') ?>"><?= h($libraryGame->title) ?></td>
+                        <td data-label="<?= __('Genres') ?>"><?= h($libraryGame->genres) ?></td>
+                        <td data-label="<?= __('Rating') ?>"><?= h((string)$libraryGame->rating) ?></td>
+                        <td data-label="<?= __('Status') ?>">
                             <?= $this->Form->create(null, ['url' => ['action' => 'editStatus', $libraryGame->id]]) ?>
                             <?= $this->Form->select('status', array_combine($statuses, $statuses), [
                                 'value' => $libraryGame->status,
