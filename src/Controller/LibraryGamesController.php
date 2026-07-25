@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Http\Exception\NotFoundException;
+
 /**
  * LibraryGames Controller
  *
@@ -10,23 +12,22 @@ namespace App\Controller;
  */
 class LibraryGamesController extends AppController
 {
+    public const STATUSES = ['playing', 'completed', 'backlog', 'wishlist'];
+
     public function index(): void
     {
-        $userId = $this->request->getAttribute('identity')->getIdentifier();
-
         $libraryGames = $this->LibraryGames->find()
-            ->where(['user_id' => $userId])
+            ->where(['user_id' => $this->currentUserId()])
             ->orderBy(['title' => 'ASC'])
             ->all();
 
-        $this->set(compact('libraryGames'));
+        $statuses = self::STATUSES;
+        $this->set(compact('libraryGames', 'statuses'));
     }
 
     public function add()
     {
-        $userId = $this->request->getAttribute('identity')->getIdentifier();
-
-        $data = $this->request->getData() + ['user_id' => $userId, 'status' => 'backlog'];
+        $data = $this->request->getData() + ['user_id' => $this->currentUserId(), 'status' => 'backlog'];
         $libraryGame = $this->LibraryGames->newEntity($data);
 
         if ($this->LibraryGames->save($libraryGame)) {
@@ -36,5 +37,55 @@ class LibraryGamesController extends AppController
         }
 
         return $this->redirect($this->referer(['action' => 'index']));
+    }
+
+    public function editStatus(string $id)
+    {
+        $this->request->allowMethod(['post', 'put']);
+
+        $libraryGame = $this->ownedLibraryGame($id);
+        $libraryGame = $this->LibraryGames->patchEntity($libraryGame, [
+            'status' => $this->request->getData('status'),
+        ]);
+
+        if ($this->LibraryGames->save($libraryGame)) {
+            $this->Flash->success(__('Status updated.'));
+        } else {
+            $this->Flash->error(__('Could not update the status.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+
+    public function delete(string $id)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+
+        $libraryGame = $this->ownedLibraryGame($id);
+        if ($this->LibraryGames->delete($libraryGame)) {
+            $this->Flash->success(__('{0} was removed from your library.', $libraryGame->title));
+        } else {
+            $this->Flash->error(__('Could not remove that game.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+
+    protected function currentUserId(): int
+    {
+        return (int)$this->request->getAttribute('identity')->getIdentifier();
+    }
+
+    protected function ownedLibraryGame(string $id): \App\Model\Entity\LibraryGame
+    {
+        $libraryGame = $this->LibraryGames->find()
+            ->where(['id' => $id, 'user_id' => $this->currentUserId()])
+            ->first();
+
+        if ($libraryGame === null) {
+            throw new NotFoundException();
+        }
+
+        return $libraryGame;
     }
 }

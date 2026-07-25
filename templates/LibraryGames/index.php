@@ -2,6 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\LibraryGame> $libraryGames
+ * @var array<string> $statuses
  */
 ?>
 <div class="library-games index content">
@@ -19,6 +20,7 @@
                     <th><?= __('Genres') ?></th>
                     <th><?= __('Rating') ?></th>
                     <th><?= __('Status') ?></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -27,7 +29,21 @@
                         <td><?= h($libraryGame->title) ?></td>
                         <td><?= h($libraryGame->genres) ?></td>
                         <td><?= h((string)$libraryGame->rating) ?></td>
-                        <td><?= h($libraryGame->status) ?></td>
+                        <td>
+                            <?= $this->Form->create(null, ['url' => ['action' => 'editStatus', $libraryGame->id]]) ?>
+                            <?= $this->Form->select('status', array_combine($statuses, $statuses), [
+                                'value' => $libraryGame->status,
+                                'onchange' => 'this.form.submit()',
+                            ]) ?>
+                            <?= $this->Form->end() ?>
+                        </td>
+                        <td>
+                            <?= $this->Form->postLink(
+                                __('Remove'),
+                                ['action' => 'delete', $libraryGame->id],
+                                ['confirm' => __('Remove {0} from your library?', $libraryGame->title)],
+                            ) ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
