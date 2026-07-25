@@ -14,15 +14,30 @@ class LibraryGamesController extends AppController
 {
     public const STATUSES = ['playing', 'completed', 'backlog', 'wishlist'];
 
+    protected const SORT_FIELDS = ['title', 'rating', 'status'];
+
     public function index(): void
     {
-        $libraryGames = $this->LibraryGames->find()
-            ->where(['user_id' => $this->currentUserId()])
-            ->orderBy(['title' => 'ASC'])
-            ->all();
+        $status = $this->request->getQuery('status', '');
+        $genre = trim((string)$this->request->getQuery('genre', ''));
+        $sort = $this->request->getQuery('sort', 'title');
+        $sort = in_array($sort, self::SORT_FIELDS, true) ? $sort : 'title';
+        $direction = $this->request->getQuery('direction') === 'desc' ? 'desc' : 'asc';
 
+        $query = $this->LibraryGames->find()
+            ->where(['user_id' => $this->currentUserId()])
+            ->orderBy([$sort => $direction]);
+
+        if (in_array($status, self::STATUSES, true)) {
+            $query->andWhere(['status' => $status]);
+        }
+        if ($genre !== '') {
+            $query->andWhere(['genres LIKE' => '%' . $genre . '%']);
+        }
+
+        $libraryGames = $query->all();
         $statuses = self::STATUSES;
-        $this->set(compact('libraryGames', 'statuses'));
+        $this->set(compact('libraryGames', 'statuses', 'status', 'genre', 'sort', 'direction'));
     }
 
     public function add()
