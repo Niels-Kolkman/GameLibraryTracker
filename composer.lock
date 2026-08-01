@@ -76,16 +76,16 @@
         },
         {
             "name": "cakephp/cakephp",
-            "version": "5.4.0",
+            "version": "5.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "82328ac6bfd47cf7fb62fdba1aa30425c74be6ca"
+                "reference": "52c341146709a5510eb0bf094991e27153f8d5c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/82328ac6bfd47cf7fb62fdba1aa30425c74be6ca",
-                "reference": "82328ac6bfd47cf7fb62fdba1aa30425c74be6ca",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/52c341146709a5510eb0bf094991e27153f8d5c6",
+                "reference": "52c341146709a5510eb0bf094991e27153f8d5c6",
                 "shasum": ""
             },
             "require": {
@@ -197,7 +197,7 @@
                 "issues": "https://github.com/cakephp/cakephp/issues",
                 "source": "https://github.com/cakephp/cakephp"
             },
-            "time": "2026-07-19T15:31:30+00:00"
+            "time": "2026-07-29T02:48:38+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -260,16 +260,16 @@
         },
         {
             "name": "cakephp/migrations",
-            "version": "5.2.4",
+            "version": "5.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/migrations.git",
-                "reference": "6f5444bb64bf89454a1eeabc25ff030fab796345"
+                "reference": "d40e3572940520efc880a1dbcabe263db0485513"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/migrations/zipball/6f5444bb64bf89454a1eeabc25ff030fab796345",
-                "reference": "6f5444bb64bf89454a1eeabc25ff030fab796345",
+                "url": "https://api.github.com/repos/cakephp/migrations/zipball/d40e3572940520efc880a1dbcabe263db0485513",
+                "reference": "d40e3572940520efc880a1dbcabe263db0485513",
                 "shasum": ""
             },
             "require": {
@@ -317,7 +317,7 @@
                 "issues": "https://github.com/cakephp/migrations/issues",
                 "source": "https://github.com/cakephp/migrations"
             },
-            "time": "2026-07-17T18:44:35+00:00"
+            "time": "2026-07-27T15:06:54+00:00"
         },
         {
             "name": "cakephp/plugin-installer",
@@ -6211,5 +6211,5 @@
         "php": ">=8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
